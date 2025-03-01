@@ -1,0 +1,33 @@
+seed: 0
+debug: 0
+do_eval: 1
+eval_mode: closed
+
+logging: 
+  name: gpt4o_easy
+  results_dir: lmms/results/${logging.name}/seed_${seed}
+  overwrite_ok: True # if False, then throws an error if the results_dir already exists
+  verbose: 1 
+
+data:
+  split: easy
+  debug: ${debug}
+  eval_mode: ${eval_mode}  
+  subset_mode: "0"
+
+
+lmm:
+  model: gpt-4o-2024-08-06
+  # downsample the fps to this value for inference ... we show the original fps as a comment. Applied in lmms.lmm_utils.make_prompt
+  fps_inference: 
+    fitness: 4      # original fps is 8
+    ballsports: 5   # original fps is 30
+    diving: 6       # original fps is 12
+    music: 1        # original fps is 30
+    surgery: 1      # original fps is 30
+  fps_warning: True  # gives warning if fps_inference is not divisible by the original fps in that dataset 
+  video_representation: frames
+  seed: ${seed}
+  max_imgs: 150
+  # for gemini models only, a video is encoded as mp4. This value is the set fps. Then, gemini api samples at 1fps. So if fps_gemini is 1, the model sees each frame.
+  fps_gemini: 1 
