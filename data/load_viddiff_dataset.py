@@ -46,20 +46,6 @@ def load_viddiff_dataset(splits=["easy"], subset_mode="0", cache_dir=None, test_
     # dataset = dataset.map(_clean_annotations)
     dataset = apply_subset_mode(dataset, subset_mode)
 
-    dataset = _get_difficulty_splits(dataset)
-
-    return dataset
-
-
-def _get_difficulty_splits(dataset):
-    with open("data/lookup_action_to_split.json", "r") as fp:
-        lookup_action_to_split = json.load(fp)
-
-    def add_split_difficulty(example):
-        example['split_difficulty'] = lookup_action_to_split[example['action']]
-        return example
-
-    dataset = dataset.map(add_split_difficulty)
     return dataset
 
 

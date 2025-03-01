@@ -29,7 +29,7 @@ def download_and_extract_videos(dataset_name, output_dir, domain):
     print(f"Videos extracted to {output_dir}")
 
 # Usage
-dataset_name = "viddiff/viddiff"
+dataset_name = "jmhb/ViddiffBench"
 output_dir = "."
 domains = ("surgery", "fitness")
 for domain in domains: 

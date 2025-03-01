@@ -36,8 +36,12 @@ def load_config(f_config: str,
         final_cfg.lmm.model = model
     if subset_mode is not None:
         final_cfg.data.subset_mode = subset_mode
-    if video_representation is not None:
-        final_cfg.lmm.video_representation = video_representation
+    
+    # special video representations for gemini, qwen and llavavideo
+    if 'gemini' in model.lower() or  'qwen' in model.lower():
+        final_cfg.lmm.video_representation = "video"
+    if 'llava-video' in model.lower():
+        final_cfg.lmm.video_representation = "llavavideo"
 
     # create args object, resolving variable references
     args = OmegaConf.to_container(final_cfg, resolve=True)

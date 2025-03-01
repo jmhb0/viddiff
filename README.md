@@ -23,7 +23,7 @@ Get `dataset` and `videos` from the Huggingface hub: [https://huggingface.co/dat
 TODO: pip install and so on 
 
 ### Prediction format:
-Collect `predictions` as a list of dicts, like this 
+Collect `predictions` as a list of dicts, like this:
 ```
 predictions = [
 	{
@@ -85,21 +85,18 @@ print(metrics)
 ```
 
 
-
 ### Open evaluation 
 In open evaluation, the model must generate the difference strings, so we need to match the predicted "description" string to the ground truth description. This is handled in the `eval_viddiff.py` file, and uses an LLM evaluator. By default, it uses OpenAI API, and so you needs to set the `OPENAI_API_KEY` environment variable. 
 
 
 
-
 ## Running LMM predictions 
-TODO: explain the args a little more
 
-We tested VidDiffBench on some popular LMMs: GPT-4o, Claude, Gemini,  QwenVL, and LLaVA-video:
+We tested VidDiffBench on some popular LMMs: GPT-4o, Claude, Gemini, QwenVL, and LLaVA-video:
 ```
-python lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_closed_easy --split easy --eval closed --model gpt-4o-2024-08-06 --video_representation=frames
+python lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_closed_easy --split easy --eval_mode closed --model gpt-4o-2024-08-06
 ```
-The options above are the deafults. 
+For API calls, we cache responses, e.g. `cache/cache_openai`. Most caches are committed with this repo. The options above are the deafults. 
 
 For --model option: 
 - Openai API, e.g. we tested 'gpt-4o-2024-08-06', set OPENAI_API_KEY environment variable. 
@@ -108,6 +105,11 @@ For --model option:
 - QwenVL we did not use an API, so you need to run it locally. Click [here](apis/howto-local-models.md). Slow because no batching. 
 - LLaVA video we did not find via API, so you need to run it locally. Click [here](apis/howto-local-models.md). Slow because no batching. 
 
+The other options:
+- `name` used to save the results to `lmms/results/<name>`
+- `split` is the split to run on: `easy`, `medium`, `hard`, default is `easy`.
+- `eval` is the evaluation mode: `closed`, `open`, default is `closed`.
+
 The inference fps is controlled in the config file `lmms/configs/config.yaml`. We've implemented each model according to it's API. The text prompts are in `lmms/lmm_prompts.py`, which are the same for all models, except for a preamble that describes the video representation: e.g. GPT models are represented as frames, while Gemini is represented as video. We also implemented automatic caching of all LMM calls in `cache/`
 
 
@@ -115,8 +117,9 @@ The inference fps is controlled in the config file `lmms/configs/config.yaml`. W
 The Viddiff method is in `viddiff_method`. To run it, look at [this README](viddiff_method/README.md). 
 
 ## Citation 
-Please cite the paper using, and also the papers where we sourced the videos (`\cite{burgessvideo, cai2022humman, parmar2022domain, grauman2024ego, gao2014jhu, }`).
+Please cite the paper using, and also the papers where we sourced the videos. Use `\cite{burgessvideo, cai2022humman, parmar2022domain, grauman2024ego, gao2014jhu}`.
 ```
+
 @inproceedings{burgessvideo,
   title={Video Action Differencing},
   author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},

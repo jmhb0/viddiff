@@ -22,12 +22,11 @@ import eval_viddiff
 @click.option("--split", "-s", default="easy", type=click.Choice(["easy", "medium", "hard"]), help="split: one of [easy, medium, hard]")
 @click.option("--eval_mode", "-e", default="closed", type=click.Choice(["closed", "open"]), help="eval: one of [closed, open]")
 @click.option("--model", "-m", default="gpt-4o-2024-08-06", help="model: the model name, like in their API, e.g. [gpt-4o-2024-08-06, anthropic/claude-3.5-sonnet-20241022]")
-@click.option("--video_representation", "-v", default="frames", type=click.Choice(["frames", "video", "llavavideo"]), help="video_representation: one of [frames, video]. Must be video for gemini.")
 @click.option("--subset_mode", "-s", default=None, help="'0' is all data samples. '2_per_action' is 2 samples per action etc.")
 # yapf: enable
-def main(config, name, split, eval_mode, model, video_representation, subset_mode):
+def main(config, name, split, eval_mode, model, subset_mode):
 	# config
-	args = config_utils.load_config(config, name=name, split=split, eval_mode=eval_mode, model=model, video_representation=video_representation, subset_mode=subset_mode)
+	args = config_utils.load_config(config, name=name, split=split, eval_mode=eval_mode, model=model, subset_mode=subset_mode)
 
 	# get dataset, videos, and allowable n_differences
 	dataset = lvd.load_viddiff_dataset([args.data.split],
