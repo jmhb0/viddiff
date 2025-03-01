@@ -167,16 +167,4 @@ Please cite the paper using, and also the papers where we sourced the videos. Us
 ```
 
 
-## Notes for this repo that we can remove for the final version
-Notes
-
-TODO for final:
-- copy the final dataset to "jmhb0/ViddiffBench". Update the call in `data/load_viddiff_dataset.py` to load from "jmhb0/ViddiffBench".
-- Put the '.py' files from data/ into the huggingface repo files. They are load_viddiff_dataset.py, download_data.py, but NOT update_dataset.py.
-- There were some files in "viddiff/VidDiffBench" that were manually added ... the Readme, the .py scripts, the video files. 
-- in download_data.py, change the "dataset_name" to "jmhb0/ViddiffBench".
-- Remove the scripts for transforming the dataset  “update_dataset.py”
-- run everything from scratch 
-- pip install and so on 
-- keepn the run `.sh` files. 
 
