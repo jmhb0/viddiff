@@ -1,5 +1,5 @@
 # Video action differencing benchmark (VidDiffBench) 
-This is evaluation code for [the VidDiff benchmark](https://huggingface.co/datasets/jmhb0/VidDiffBench), from the ICLR 2025 paper [Video Action Differencing](https://openreview.net/forum?id=3bcN6xlO6f). The below text introduces the task, and has evaluation code. The paper also proposed Viddiff method, which is in `viddiff_method` - read about at [this README](viddiff_method/README.md). 
+This is evaluation code for [the VidDiff benchmark](https://huggingface.co/datasets/jmhb/VidDiffBench), from the ICLR 2025 paper [Video Action Differencing](https://openreview.net/forum?id=3bcN6xlO6f). The below text introduces the task, and has evaluation code. The paper also proposed Viddiff method, which is in `viddiff_method` - read about at [this README](viddiff_method/README.md). 
 
 # Task: Video Action Differencing
 The Video Action Differencing task compares two videos of the same action. The goal is to identify differences in how the action is performed, where the differences are expressed in natural language.
@@ -17,7 +17,7 @@ In open evaluation, the model must generate the difference strings:
 
 
 ## Get the dataset
-Get `dataset` and `videos` from the Huggingface hub: [https://huggingface.co/datasets/jmhb0/VidDiffBench](https://huggingface.co/datasets/jmhb0/VidDiffBench)
+Get `dataset` and `videos` from the Huggingface hub: [https://huggingface.co/datasets/jmhb/VidDiffBench](https://huggingface.co/datasets/jmhb/VidDiffBench)
 
 ## Evaluation
 TODO: pip install and so on 
