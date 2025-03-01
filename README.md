@@ -20,7 +20,7 @@ In open evaluation, the model must generate the difference strings:
 Get `dataset` and `videos` from the Huggingface hub: [https://huggingface.co/datasets/jmhb/VidDiffBench](https://huggingface.co/datasets/jmhb/VidDiffBench)
 
 ## Evaluation
-TODO: pip install and so on 
+First: `pip install -r requirements.txt`
 
 ### Prediction format:
 Collect `predictions` as a list of dicts, like this:
