@@ -32,13 +32,13 @@ predictions = [
       "prediction": "a|b"
     }, 
     ... // other predictions for this sample
-    },
-    ... // other samples
+  },
+  ... // other samples
 ]
 ```
 - Prediction at `predictions[i]` is for the sample at `dataset[i]`. Since we have multiple differences to predict, the dictionary has multiple entries.
 - The "difference_key" are the keys from `dataset[i]['differences_gt']`.
-- The "prediction" is 'a' or 'b'.
+- The "prediction" is 'a' or 'b'. 
 - The "description" is the text description of the difference (only used in open evaluation). 
 
 For example:
