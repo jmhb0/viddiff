@@ -26,11 +26,11 @@ TODO: pip install and so on
 Collect `predictions` as a list of dicts, like this:
 ```
 predictions = [
-	{
-		"difference_key": {
-			"description": "...",
-			"prediction": "a|b"
-		}, 
+  {
+    "difference_key": {
+      "description": "...",
+      "prediction": "a|b"
+    }, 
 		... // other predictions for this sample
 	},
 	... // other samples
@@ -44,28 +44,28 @@ predictions = [
 For example:
 ```
 predictions = [
-	{
-		"0": {
-			"description": "the feet stance is wider",
-			"prediction": "b"
-		}, 
-		"1": {
-			"description": "the speed of hip rotation is faster",
-			"prediction": "a"
-		}, 
-	},
-	... // other samples
+  {
+    "0": {
+      "description": "the feet stance is wider",
+      "prediction": "b"
+    }, 
+    "1": {
+      "description": "the speed of hip rotation is faster",
+      "prediction": "a"
+    }, 
+  },
+  ... // other samples
 ]
 ```
 
 For closed evaluation, you can skip the description field, and write it without the lowest-level dict:
 ```
 predictions = [
-	{
-		"0": "b",
-		"1": "a",
-	},
-	... // other samples
+  {
+    "0": "b",
+    "1": "a",
+    },
+  ... // other samples
 ]
 ```
 ### Running evaluation

@@ -30,12 +30,9 @@ def main(config, name, split, eval_mode, model, subset_mode):
 
 	# get dataset, videos, and allowable n_differences
 	dataset = lvd.load_viddiff_dataset([args.data.split],
-									   args.data.subset_mode,
-									   cache_dir=None)
-	videos = lvd.load_all_videos(dataset,
-								 do_tqdm=True,
-								 cache=True,
-								 cache_dir="cache/cache_data")
+									args.data.subset_mode,
+									cache_dir=None)
+	videos = lvd.load_all_videos(dataset, do_tqdm=True, cache=True, cache_dir="cache/cache_data")
 	n_differences = dataset['n_differences_open_prediction'] # for open eval only
 
 	# make prompts and call the lmm
