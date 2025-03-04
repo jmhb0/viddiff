@@ -56,7 +56,7 @@
             margin-bottom: 5px;
         }
         .leaderboard-container {
-            width: 100%;
+            width: 75%;
             max-width: 1200px;
             margin: auto;
             text-align: center;
@@ -213,7 +213,7 @@
       <ul>
         <li><strong>Real-world & diverse actions:</strong> the actions are important to real skill learning, and come from a range of different activities: fitness exercises (<a href="https://caizhongang.com/projects/HuMMan/">HuMMann</a>), ballsports (<a href="https://ego-exo4d-data.org/">Ego-Exo4D"</a>), music (also <a href="https://ego-exo4d-data.org/">Ego-Exo4D"</a>), diving (<a href="https://github.com/xujinglin/FineDiving"> FineDiving</a>), and Surgery (<a href="https://cirl.lcsr.jhu.edu/research/hmm/datasets/jigsaws_release/">JIGSAWs</a>). There's a range in how complex the actions are, and how consistent the video backgrounds are.</li>
         <li><strong>Skill-relevant differences:</strong> each action has a taxonomy of possible differences that are important to skill-learning. The differences are based on fine-grained motion and based on domain expertise.</li> 
-        <li><strong>High-quality human annotations:</strong> 4,469 annotated differences over 549 video pairs (~8 differences per video pair). Annotation time per video pair is ~3 minutes.</li>
+        <li><strong>Human-generated difference annotations:</strong> 4,469 difference anntations over 549 video pairs (~8 differences per video pair). Annotation time per video pair is ~3 minutes.</li>
         <li><strong>Localization timestamp annotations:</strong> frame-level annotations of the sub-actions and differences. They enable evaluating localization quality of models, which can help future model development. </li>
         <li><strong>Challenges existing models:</strong> highlights major gaps in video understanding beyond single-frame or single-video analysis.</li>
         <img src="./static/images/table-benchmark.png" style="width: 70%; display: block; margin: auto;" class="" alt="VidDiffBench table of statistics."/>
@@ -269,7 +269,7 @@
     </div>
     (In closed mode, the method is the same, except here the difference strings are provided, so we don't need to generate them.)
     <br>
-    Overall this method is structured to <em>localize</em> the key parts of the video where differences are possible, which should make visual comparison with the VLM easier. The results are in the tables in the previous section as "VidDiff (ours)". The results outperform GPT-4o, which is the VLM backbone that we used, and this shows the value of our staged approach. It had the best overall performance in open eval, and second-best in closed eval.
+    Overall this method is structured to <em>localize</em> the key parts of the video where differences are possible, which should make visual comparison with the VLM easier (the <em>fine-grain understanding</em> part). The results are in the tables in the previous section as "VidDiff (ours)". The results outperform GPT-4o, which is the VLM backbone that we used, and this shows the value of our staged approach. It had the best overall performance in open eval, and second-best in closed eval.
   </div>
 </section>
 
