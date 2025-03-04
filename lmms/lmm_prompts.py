@@ -31,7 +31,7 @@ Return a json like this, replacing '...' with actual content:
 }
 """
 
-# mode 1 
+# mode 1
 prompt_template_mcq_ab = """\
 Here are two videos of an action with the following description: "{action_description}".
 {video_representation_description}
@@ -44,7 +44,7 @@ If video 'a', then write "The answer is (a)".
 If video 'b', then write "The answer is (b)".
 """
 
-# mode 2 - closed, also a or b 
+# mode 2 - closed, also a or b
 prompt_template_mode_2 = """\
 Here are two videos of an action with the following description: "{action_description}".
 {video_representation_description}
@@ -96,7 +96,7 @@ The frame rate is the same.
 """
 video_rep_description_2_videos = """\
 We have passed 'video a' and 'video b' as videos to the prompt in that order."""
-video_rep_description_first_frame="""\
+video_rep_description_first_frame = """\
 We have provided two images. 
 The first image is the first frame from 'video a'. 
 The second image is the first frame from 'video b'.
@@ -128,6 +128,3 @@ If the bad json is just "{}" then you can return an empty json.
 LLM OUTPUT: 
 {llm_output}
 """
-
-
-

@@ -1,4 +1,5 @@
-import socket 
+import socket
+
 NODE = socket.gethostname().split(".")[0]
 
 # CLIP API

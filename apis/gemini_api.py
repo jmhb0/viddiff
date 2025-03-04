@@ -3,6 +3,7 @@ Functions for calling Gemini api
 Needs to have set GOOGLE_API_KEY.
 Models: https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
 """
+
 import os
 import sys
 import ipdb
@@ -27,7 +28,6 @@ from cache import cache_utils
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 cache_gemini = lmdb.open("cache/gemini", map_size=int(1e11))
 cache_lock = Lock()
-
 
 
 def select_random_items(input_list, N: int = 3):
@@ -68,7 +68,7 @@ def numpy_array_to_video(video_array, output_path, fps=30):
     height, width, channels = video_array[0].shape
 
     # Define the codec and create a VideoWriter object
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for .mp4 format
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Codec for .mp4 format
     out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
     for frame in video_array:
@@ -105,7 +105,7 @@ def call_gemini(
     temp_dir: str = "tmp",
     fps: int = 30,
 ):
-    """ 
+    """
     models: ["models/gemini-1.5-flash", "models/gemini-1.5-pro"]
     """
     if isinstance(system_prompt, str):
@@ -154,12 +154,12 @@ def call_gemini(
         # Convert NumPy array back to video
         for video in videos:
             hash_list: list[str] = select_random_items(
-                content[-1]["imgs_hash_key"], N=3)
-            joined_hashes: str = ''.join(hash_list)
+                content[-1]["imgs_hash_key"], N=3
+            )
+            joined_hashes: str = "".join(hash_list)
 
             os.makedirs(temp_dir, exist_ok=True)
-            video_file_name: str = os.path.join(temp_dir,
-                                                f"{joined_hashes}.mp4")
+            video_file_name: str = os.path.join(temp_dir, f"{joined_hashes}.mp4")
 
             numpy_array_to_video(video, output_path=video_file_name, fps=fps)
 
@@ -175,11 +175,13 @@ def call_gemini(
                 raise ValueError(video_file.state.name)
 
     gemini_model = genai.GenerativeModel(model_name=model)
-    response = gemini_model.generate_content(content_call,
-                                      request_options={"timeout": 600},
-                                      safety_settings={
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-    })
+    response = gemini_model.generate_content(
+        content_call,
+        request_options={"timeout": 600},
+        safety_settings={
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        },
+    )
 
     prompt_tokens = response.usage_metadata.prompt_token_count
     completion_tokens = response.usage_metadata.candidates_token_count
@@ -193,16 +195,14 @@ def call_gemini(
     if os.path.exists(video_file_name):
         os.remove(video_file_name)
 
-    price = compute_api_call_cost(prompt_tokens,
-                                  completion_tokens,
-                                  model=model)
+    price = compute_api_call_cost(prompt_tokens, completion_tokens, model=model)
 
     return msg, response
 
 
 def call_gemini_batch(texts, videos, seeds, debug=None, **kwargs):
-    """ 
-    no multithreading for now 
+    """
+    no multithreading for now
     """
     n = len(texts)
     msgs = []
@@ -216,14 +216,12 @@ def call_gemini_batch(texts, videos, seeds, debug=None, **kwargs):
         msg, res = call_gemini(texts[i], videos[i], seeds[i], **kwargs)
         msgs.append(msg)
         responses.append(res)
-        
+
     return msgs, responses
 
 
 def compute_api_call_cost(
-    prompt_tokens: int,
-    completion_tokens: int,
-    model="models/gemini-1.5-pro"
+    prompt_tokens: int, completion_tokens: int, model="models/gemini-1.5-pro"
 ):
     """
     Warning: prices need to be manually updated from
@@ -249,8 +247,10 @@ def compute_api_call_cost(
     }
     key = model
 
-    price = prompt_tokens * prices_per_million_input[
-        key] + completion_tokens * prices_per_million_output[key]
+    price = (
+        prompt_tokens * prices_per_million_input[key]
+        + completion_tokens * prices_per_million_output[key]
+    )
     price = price / 1e6
 
     return price
@@ -260,17 +260,19 @@ if __name__ == "__main__":
     text0 = "Explain the differences between this two videos. Use JSON {'answer':'...'}"
 
     # Convert video to NumPy array
-    video_path_1 = 'data/src_fitnessaqa/Squat/Labeled_Dataset/videos/37640_3.mp4'
-    video_path_2 = 'data/src_fitnessaqa/Squat/Labeled_Dataset/videos/48331_1.mp4'
+    video_path_1 = "data/src_fitnessaqa/Squat/Labeled_Dataset/videos/37640_3.mp4"
+    video_path_2 = "data/src_fitnessaqa/Squat/Labeled_Dataset/videos/48331_1.mp4"
 
     video_array_1 = video_to_numpy_array(video_path_1)
     video_array_2 = video_to_numpy_array(video_path_2)
     videos: list[np.array] = [video_array_1, video_array_2]
 
-    msg, response = call_gemini(text=text0,
-                                model="models/gemini-1.5-flash",
-                                cache=False,
-                                videos=videos,
-                                json_mode=False)
+    msg, response = call_gemini(
+        text=text0,
+        model="models/gemini-1.5-flash",
+        cache=False,
+        videos=videos,
+        json_mode=False,
+    )
     ipdb.set_trace()
     pass

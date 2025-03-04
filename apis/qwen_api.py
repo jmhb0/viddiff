@@ -14,16 +14,22 @@ from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoPro
 sys.path.insert(0, "..")
 sys.path.insert(0, ".")
 from cache import cache_utils
-from apis.gemini_api import select_random_items, video_to_numpy_array, numpy_array_to_video
+from apis.gemini_api import (
+    select_random_items,
+    video_to_numpy_array,
+    numpy_array_to_video,
+)
 
 cache_qwen = lmdb.open("cache/cache_qwen", map_size=int(1e11))
 cache_lock = Lock()
 
 
-def get_qwen_model(model_name: str = "Qwen/Qwen2-VL-7B-Instruct",
-                   torch_dtype=torch.bfloat16,
-                   verbose: bool = True,
-                   device: str = "auto") -> dict:
+def get_qwen_model(
+    model_name: str = "Qwen/Qwen2-VL-7B-Instruct",
+    torch_dtype=torch.bfloat16,
+    verbose: bool = True,
+    device: str = "auto",
+) -> dict:
     """
     Load the Qwen model and processor for conditional generation.
 
@@ -36,7 +42,7 @@ def get_qwen_model(model_name: str = "Qwen/Qwen2-VL-7B-Instruct",
     verbose : bool, optional
         If True, prints the loaded model name. Default is True.
     device : str, optional
-        The device on which to load the model. It can be "cpu", "cuda", or "auto" 
+        The device on which to load the model. It can be "cpu", "cuda", or "auto"
         to automatically choose the best device. Default is "auto".
 
     Returns
@@ -60,7 +66,8 @@ def get_qwen_model(model_name: str = "Qwen/Qwen2-VL-7B-Instruct",
         model_name,
         torch_dtype=torch_dtype,
         attn_implementation="flash_attention_2",
-        device_map=device)
+        device_map=device,
+    )
 
     processor = AutoProcessor.from_pretrained(model_name)
 
@@ -68,7 +75,7 @@ def get_qwen_model(model_name: str = "Qwen/Qwen2-VL-7B-Instruct",
         "model": model,
         "model_name": model_name,
         "processor": processor,
-        "device": device
+        "device": device,
     }
 
     if verbose:
@@ -78,30 +85,31 @@ def get_qwen_model(model_name: str = "Qwen/Qwen2-VL-7B-Instruct",
 
 
 def call_qwen2V(
-        # args for setting the `messages` param
-        model_dict: dict,
-        text: str,
-        max_pixles: int = 360 * 420,
-        videos: list[np.ndarray] = None,
-        system_prompt: str = None,
-        json_mode: bool = False,
-        # kwargs for client.chat.completions.creat
-        temperature: float = 1,
-        max_tokens: int = 2048,
-        top_p: float = 1,
-        frequency_penalty: float = 0,
-        presence_penalty: float = 0,
-        seed: int = 0,
-        n: int = 1,
-        # args for caching behaviour
-        cache: bool = True,
-        overwrite_cache: bool = False,
-        num_retries:
+    # args for setting the `messages` param
+    model_dict: dict,
+    text: str,
+    max_pixles: int = 360 * 420,
+    videos: list[np.ndarray] = None,
+    system_prompt: str = None,
+    json_mode: bool = False,
+    # kwargs for client.chat.completions.creat
+    temperature: float = 1,
+    max_tokens: int = 2048,
+    top_p: float = 1,
+    frequency_penalty: float = 0,
+    presence_penalty: float = 0,
+    seed: int = 0,
+    n: int = 1,
+    # args for caching behaviour
+    cache: bool = True,
+    overwrite_cache: bool = False,
+    num_retries:
     # if json_mode=True, and not json decodable, retry this many time
     int = 10,
-        # temp directory where to store covnerted arrays in order to submit to gemini
-        temp_dir: str = "VideoCache",
-        fps: int = 30):
+    # temp directory where to store covnerted arrays in order to submit to gemini
+    temp_dir: str = "VideoCache",
+    fps: int = 30,
+):
     """
     Generate responses using the Qwen model with optional video input and caching.
 
@@ -179,16 +187,18 @@ def call_qwen2V(
         content.append({"imgs_hash_key": video_cahce})
 
     #  Just saving for caching :  arguments to the call for client.chat.completions.create
-    kwargs = dict(messages=content,
-                  response_format="None",
-                  model=model_dict["model_name"],
-                  temperature=temperature,
-                  max_tokens=max_tokens,
-                  top_p=top_p,
-                  frequency_penalty=frequency_penalty,
-                  presence_penalty=presence_penalty,
-                  seed=seed,
-                  n=n)
+    kwargs = dict(
+        messages=content,
+        response_format="None",
+        model=model_dict["model_name"],
+        temperature=temperature,
+        max_tokens=max_tokens,
+        top_p=top_p,
+        frequency_penalty=frequency_penalty,
+        presence_penalty=presence_penalty,
+        seed=seed,
+        n=n,
+    )
 
     if cache:
         cache_key = json.dumps(kwargs, sort_keys=True)
@@ -203,33 +213,33 @@ def call_qwen2V(
         # Convert NumPy array back to video
         video_keys = content.pop(-1)
         for i, video in enumerate(videos):
-            hash_list: list[str] = select_random_items(
-                video_keys["imgs_hash_key"], N=3)
-            joined_hashes: str = ''.join(hash_list)
+            hash_list: list[str] = select_random_items(video_keys["imgs_hash_key"], N=3)
+            joined_hashes: str = "".join(hash_list)
 
             os.makedirs(temp_dir, exist_ok=True)
-            video_file_name: str = os.path.join(temp_dir,
-                                                f"{joined_hashes}.mp4")
+            video_file_name: str = os.path.join(temp_dir, f"{joined_hashes}.mp4")
 
             numpy_array_to_video(video, output_path=video_file_name, fps=fps)
 
             content.append({"type": "text", "text": f"Video {i}:"})
-            content.append({
-                "type": "video",
-                "video": video_file_name,
-                "max_pixels": max_pixles,
-                "fps": fps
-            })
+            content.append(
+                {
+                    "type": "video",
+                    "video": video_file_name,
+                    "max_pixels": max_pixles,
+                    "fps": fps,
+                }
+            )
 
     messages = [{"role": "user", "content": content}]
 
-    print("*"*80)
+    print("*" * 80)
     print(content)
-
 
     # Preparation for inference
     text = model_dict["processor"].apply_chat_template(
-        messages, tokenize=False, add_generation_prompt=True)
+        messages, tokenize=False, add_generation_prompt=True
+    )
 
     image_inputs, video_inputs = process_vision_info(messages)
     inputs = model_dict["processor"](
@@ -245,13 +255,14 @@ def call_qwen2V(
     # Inference
     generated_ids = model_dict["model"].generate(**inputs, max_new_tokens=1000)
     generated_ids_trimmed = [
-        out_ids[len(in_ids):]
+        out_ids[len(in_ids) :]
         for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
     ]
     msg = model_dict["processor"].batch_decode(
         generated_ids_trimmed,
         skip_special_tokens=True,
-        clean_up_tokenization_spaces=False)
+        clean_up_tokenization_spaces=False,
+    )
 
     prompt_tokens = len(generated_ids_trimmed[0])
     completion_tokens = len(generated_ids_trimmed[0])
@@ -264,8 +275,7 @@ def call_qwen2V(
         with cache_lock:
             cache_utils.save_to_cache(cache_key, msg, cache_qwen)
 
-    response = dict(prompt_tokens=prompt_tokens,
-                    completion_tokens=completion_tokens)
+    response = dict(prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
 
     if os.path.exists(video_file_name):
         os.remove(video_file_name)
@@ -273,15 +283,17 @@ def call_qwen2V(
     return msg, response
 
 
-def call_qwen_batch(batch_prompts_text,
-                    batch_prompts_video,
-                    seeds=None,
-                    model="Qwen/Qwen2-VL-7B-Instruct",
-                    debug=None,
-                    json_mode=False):
-    model_dict: dict = get_qwen_model(model_name=model,
-                                      torch_dtype=torch.bfloat16,
-                                      device="auto")
+def call_qwen_batch(
+    batch_prompts_text,
+    batch_prompts_video,
+    seeds=None,
+    model="Qwen/Qwen2-VL-7B-Instruct",
+    debug=None,
+    json_mode=False,
+):
+    model_dict: dict = get_qwen_model(
+        model_name=model, torch_dtype=torch.bfloat16, device="auto"
+    )
 
     n = len(batch_prompts_text)
     msgs = []
@@ -293,11 +305,9 @@ def call_qwen_batch(batch_prompts_text,
         video = batch_prompts_video[i]
         if "json" not in text.lower():
             raise "Qwen expects json mode"
-        msg, response = call_qwen2V(model_dict=model_dict,
-                                    text=text,
-                                    cache=True,
-                                    videos=video,
-                                    json_mode=False)
+        msg, response = call_qwen2V(
+            model_dict=model_dict, text=text, cache=True, videos=video, json_mode=False
+        )
         msgs.append(msg)
         responses.append(response)
 
@@ -307,9 +317,11 @@ def call_qwen_batch(batch_prompts_text,
 # basic testing
 if __name__ == "__main__":
     # sys.path.insert(0, "..")
-    model_dict: dict = get_qwen_model(model_name="Qwen/Qwen2-VL-7B-Instruct",
-                                      torch_dtype=torch.bfloat16,
-                                      device="auto")
+    model_dict: dict = get_qwen_model(
+        model_name="Qwen/Qwen2-VL-7B-Instruct",
+        torch_dtype=torch.bfloat16,
+        device="auto",
+    )
 
     instruction = """
     Explain the differences between the video 1 and video 2, be concise. 
@@ -317,8 +329,8 @@ if __name__ == "__main__":
     """
 
     # Convert video to NumPy array
-    video_path_1 = 'data/src_fitnessaqa/Squat/Labeled_Dataset/videos/37640_3.mp4'
-    video_path_2 = 'data/src_fitnessaqa/Squat/Labeled_Dataset/videos/48331_1.mp4'
+    video_path_1 = "data/src_fitnessaqa/Squat/Labeled_Dataset/videos/37640_3.mp4"
+    video_path_2 = "data/src_fitnessaqa/Squat/Labeled_Dataset/videos/48331_1.mp4"
 
     video_array_1 = video_to_numpy_array(video_path_1)
     video_array_2 = video_to_numpy_array(video_path_2)
@@ -328,10 +340,12 @@ if __name__ == "__main__":
 
     videos: list[np.array] = [video_array_1, video_array_2]
 
-    msg, response = call_qwen2V(model_dict=model_dict,
-                                text=instruction,
-                                cache=True,
-                                videos=videos,
-                                json_mode=False)
+    msg, response = call_qwen2V(
+        model_dict=model_dict,
+        text=instruction,
+        cache=True,
+        videos=videos,
+        json_mode=False,
+    )
 
     ipdb.set_trace()

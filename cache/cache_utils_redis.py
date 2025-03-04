@@ -3,6 +3,7 @@ from typing import Optional
 import redis
 import numpy as np
 
+
 def get_from_cache(key: str, redis_env: redis.Redis) -> Optional[str]:
     try:
         value = redis_env.get(key.encode())
@@ -22,6 +23,7 @@ def save_to_cache(key: str, value: str, redis_env: redis.Redis):
         logging.warning(f"Error saving to cache: {e}")
     return None
 
+
 def save_to_cache_np(key: str, numpy_array: np.ndarray, redis_env: redis.Redis):
     """Special case of save_to_cache for numpy arrays."""
     hashed_key = hash_key(key)
@@ -34,6 +36,7 @@ def save_to_cache_np(key: str, numpy_array: np.ndarray, redis_env: redis.Redis):
         redis_env.set(hashed_key.encode(), value_bytes)
     except Exception as e:
         logging.warning(f"Error saving numpy array to cache: {e}")
+
 
 def get_from_cache_np(key: str, redis_env: redis.Redis) -> Optional[np.ndarray]:
     """Retrieve a cached numpy array from Redis."""
@@ -51,11 +54,14 @@ def get_from_cache_np(key: str, redis_env: redis.Redis) -> Optional[np.ndarray]:
 
     return None
 
+
 def hash_key(key: str) -> str:
     return hashlib.sha256(key.encode()).hexdigest()
 
+
 def hash_key_32(key: str) -> str:
     return hashlib.md5(key.encode()).hexdigest()
+
 
 def hash_array(array: np.ndarray) -> str:
     return hashlib.sha256(array.tobytes()).hexdigest()

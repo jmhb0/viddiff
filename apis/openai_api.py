@@ -3,6 +3,7 @@ Functions for calling api
 Needs to have set OPENAI_API_KEY.
 Models: https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
 """
+
 import ipdb
 import base64
 import asyncio
@@ -36,6 +37,7 @@ httpx_logger.setLevel(logging.WARNING)
 sys.path.insert(0, "..")
 sys.path.insert(0, ".")
 from cache import cache_utils
+
 # from cache import cache_utils_redis as cache_utils
 
 cache_openai = lmdb.open("cache/cache_openai", map_size=int(1e12))
@@ -75,36 +77,36 @@ def call_gpt(
     cache_dir=cache_openai,
     num_retries:
     # if json_mode=True, and not json decodable, retry this many time
-    int = 3):
-    """ 
+    int = 3,
+):
+    """
     Call GPT LLM or VLM synchronously with caching.
     To call this in a batch efficiently, see func `call_gpt_batch`.
 
     If `cache=True`, then look in database ./cache/cache_openai for these exact
     calling args/kwargs. The caching only saves the first return message, and not
-    the whole response object. 
+    the whole response object.
 
-    imgs: optionally add images. Must be a sequence of numpy arrays. 
+    imgs: optionally add images. Must be a sequence of numpy arrays.
     overwrite_cache (bool): do NOT get response from cache but DO save it to cache.
-    seed (int): doesnt actually work with openai API atm, but it is in the 
+    seed (int): doesnt actually work with openai API atm, but it is in the
         cache key, so changing it will force the API to be called again
     """
     global HITS, MISSES
     print(f"\rGPT cache. Hits: {HITS}. Misses: {MISSES}", end="")
     # response format
 
-    if 'gpt' in model:
+    if "gpt" in model:
         base_url = "https://api.openai.com/v1"
         api_key = os.getenv("OPENAI_API_KEY")
-    elif 'claude' in model:
+    elif "claude" in model:
         base_url = "https://openrouter.ai/api/v1"
         api_key = os.getenv("OPENROUTER_API_KEY")
-    elif 'Qwen' in model: 
+    elif "Qwen" in model:
         base_url = "https://api.hyperbolic.xyz/v1"
         api_key = os.getenv("HYPERBOLIC_API_KEY")
-    
 
-    client = openai.OpenAI(base_url=base_url, api_key=api_key)  
+    client = openai.OpenAI(base_url=base_url, api_key=api_key)
 
     if response_format:
         response_format_in = response_format
@@ -120,10 +122,16 @@ def call_gpt(
             response_format = {"type": "text"}
 
     # system prompt
-    messages = [{
-        "role": "system",
-        "content": system_prompt,
-    }] if system_prompt is not None else []
+    messages = (
+        [
+            {
+                "role": "system",
+                "content": system_prompt,
+            }
+        ]
+        if system_prompt is not None
+        else []
+    )
 
     # text prompt
     content = [
@@ -136,8 +144,7 @@ def call_gpt(
     # for imgs, put a hash key representation in content for now. If not cahcing,
     # we'll replace this value later (it's because `_encode_image_np` is slow)
     if imgs:
-        content.append(
-            {"imgs_hash_key": [cache_utils.hash_array(im) for im in imgs]})
+        content.append({"imgs_hash_key": [cache_utils.hash_array(im) for im in imgs]})
 
     # text & imgs to message - assume one message only
     messages.append({"role": "user", "content": content})
@@ -156,7 +163,6 @@ def call_gpt(
         n=n,
     )
 
-    
     if cache:
         cache_key = json.dumps(kwargs, sort_keys=True)
         with cache_lock:
@@ -176,23 +182,25 @@ def call_gpt(
         assert "imgs_hash_key" in content[-1].keys()
         content.pop()
 
-        if 'gpt' not in model:
+        if "gpt" not in model:
             imagelst = [Image.fromarray(im) for im in imgs]
             base64_imgs = ImageList(tuple(imagelst)).to_base64()
         else:
             base64_imgs = [_encode_image_np(im) for im in imgs]
 
         for base64_img in base64_imgs:
-            content.append({
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:image/jpeg;base64,{base64_img}",
-                    "detail": detail,
-                },
-            })
+            content.append(
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{base64_img}",
+                        "detail": detail,
+                    },
+                }
+            )
 
     if is_structured:
-        kwargs['response_format'] = response_format_in
+        kwargs["response_format"] = response_format_in
 
     # call gpt
     # response = client.chat.completions.create(**kwargs)
@@ -209,22 +217,21 @@ def call_gpt(
     if json_mode or is_structured:
         msg = json.loads(msg)
 
-    response = dict(prompt_tokens=prompt_tokens,
-                    completion_tokens=completion_tokens)
-    price = compute_api_call_cost(prompt_tokens,
-                                  completion_tokens,
-                                  model=model)
+    response = dict(prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
+    price = compute_api_call_cost(prompt_tokens, completion_tokens, model=model)
 
     return msg, response
 
 
 def _encode_image_np(image_np: np.array):
-    """ Encode numpy array image to bytes64 so it can be sent over http """
+    """Encode numpy array image to bytes64 so it can be sent over http"""
     assert image_np.ndim == 3 and image_np.shape[-1] == 3
     image = Image.fromarray(image_np)
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue()).decode('utf-8')
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+
 class ImageList:
     """Handles a list of images with encoding support for base64 conversion.
 
@@ -263,14 +270,11 @@ class ImageList:
         image_pkls = [pickle.dumps(img) for img in self.images]
         return tuple(ImageList._encode(pkl) for pkl in image_pkls)
 
-def call_gpt_batch(texts,
-                   imgs=None,
-                   seeds=None,
-                   json_modes=None,
-                   get_meta=True,
-                   debug=None,
-                   **kwargs):
-    """ 
+
+def call_gpt_batch(
+    texts, imgs=None, seeds=None, json_modes=None, get_meta=True, debug=None, **kwargs
+):
+    """
     with multithreading
     if return_meta, then return a dict that tells you the runtime, the cost
     """
@@ -285,11 +289,11 @@ def call_gpt_batch(texts,
     if seeds is not None or json_modes is not None or debug is not None:
         for i in range(n):
             if seeds is not None:
-                all_kwargs[i]['seed'] = seeds[i]
+                all_kwargs[i]["seed"] = seeds[i]
             if json_modes is not None:
-                all_kwargs[i]['json_mode'] = json_modes[i]
+                all_kwargs[i]["json_mode"] = json_modes[i]
             if debug is not None:
-                all_kwargs[i]['debug'] = debug[i]
+                all_kwargs[i]["debug"] = debug[i]
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=24) as executor:
         futures = []
@@ -305,9 +309,11 @@ def call_gpt_batch(texts,
         for i, (msg, tokens) in enumerate(results):
 
             if tokens is not None:
-                price = compute_api_call_cost(tokens['prompt_tokens'],
-                                              tokens['completion_tokens'],
-                                              kwargs.get("model", "gpt-4o"))
+                price = compute_api_call_cost(
+                    tokens["prompt_tokens"],
+                    tokens["completion_tokens"],
+                    kwargs.get("model", "gpt-4o"),
+                )
             else:
                 price = 0
 
@@ -316,9 +322,9 @@ def call_gpt_batch(texts,
     return results
 
 
-def compute_api_call_cost(prompt_tokens: int,
-                          completion_tokens: int,
-                          model="gpt-4-turbo-2024-04-09"):
+def compute_api_call_cost(
+    prompt_tokens: int, completion_tokens: int, model="gpt-4-turbo-2024-04-09"
+):
     """
     Warning: prices need to be manually updated from
     https://openai.com/api/pricing/
@@ -328,14 +334,14 @@ def compute_api_call_cost(prompt_tokens: int,
         "gpt-4o": 5,
         "gpt-4-turbo": 10,
         "gpt-4": 30,
-        "gpt-3.5-turbo": 0.5
+        "gpt-3.5-turbo": 0.5,
     }
     prices_per_million_output = {
         "gpt-4o-mini": 0.075,
         "gpt-4o": 15,
         "gpt-4-turbo": 30,
         "gpt-4": 60,
-        "gpt-3.5-turbo": 1.5
+        "gpt-3.5-turbo": 1.5,
     }
     if "gpt-4o-mini" in model:
         key = "gpt-4o-mini"
@@ -343,15 +349,17 @@ def compute_api_call_cost(prompt_tokens: int,
         key = "gpt-4o"
     elif "gpt-4-turbo" in model:
         key = "gpt-4-turbo"
-    elif 'gpt-4' in model:
+    elif "gpt-4" in model:
         key = "gpt-4"
-    elif 'gpt-3.5-turbo' in model:
+    elif "gpt-3.5-turbo" in model:
         key = "gpt-3.5-turbo"
     else:
         return 0
 
-    price = prompt_tokens * prices_per_million_input[
-        key] + completion_tokens * prices_per_million_output[key]
+    price = (
+        prompt_tokens * prices_per_million_input[key]
+        + completion_tokens * prices_per_million_output[key]
+    )
     price = price / 1e6
 
     return price
@@ -361,11 +369,13 @@ def compute_api_call_cost(prompt_tokens: int,
 if __name__ == "__main__":
     import time
     import sys
+
     sys.path.insert(0, "..")
     sys.path.insert(0, ".")
 
     text0 = "What model are you? How did Steve Irwin die? "
     from pydantic import BaseModel
+
     # ipdb.set_trace()
 
     class Ret(BaseModel):
@@ -374,13 +384,15 @@ if __name__ == "__main__":
     model = "anthropic/claude-3.5-sonnet"
     text0 = "whats in the image"
     from PIL import Image
+
     imgs = [np.array(Image.open("tmp.png"))]
-    msg, res = call_gpt(text0,
-                        model=model,
-                        imgs=imgs,
-                        cache=False,
-                        json_mode=False,
-                        # response_format=Ret
-                        )
+    msg, res = call_gpt(
+        text0,
+        model=model,
+        imgs=imgs,
+        cache=False,
+        json_mode=False,
+        # response_format=Ret
+    )
     ipdb.set_trace()
     pass

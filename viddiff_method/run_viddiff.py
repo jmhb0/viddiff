@@ -4,7 +4,8 @@ from typing import Dict, List, Tuple
 import logging
 from line_profiler import LineProfiler
 
-import sys 
+import sys
+
 sys.path.insert(0, "")
 
 # from viddiff_method import load_viddiff_dataset as lvd
@@ -15,9 +16,8 @@ from viddiff_method.stage2_retriever import Retriever
 from viddiff_method.stage3_differencer import Differencer
 from eval_viddiff import eval_viddiff
 
-logging.getLogger('openai').setLevel(logging.WARNING)
-logging.basicConfig(level=logging.INFO,
-                    format='%(filename)s:%(levelname)s:%(message)s')
+logging.getLogger("openai").setLevel(logging.WARNING)
+logging.basicConfig(level=logging.INFO, format="%(filename)s:%(levelname)s:%(message)s")
 logging.getLogger("openai").setLevel(logging.ERROR)
 logging.getLogger("_client").setLevel(logging.ERROR)
 
