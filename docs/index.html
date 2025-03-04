@@ -21,9 +21,11 @@
 
 </script>
   <!-- Math -->
-  <script type="text/javascript"
-  src="static/js/LaTeXMathML.js">
-  </script>
+  <script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
@@ -39,6 +41,21 @@
   <!-- <script src="./static/js/bulma-carousel.min.js"></script> -->
   <!-- <script src="./static/js/bulma-slider.min.js"></script> -->
   <script src="./static/js/index.js"></script>
+  <!-- temporary styles to overwrite the <ul> not working in bulma.css -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        /* Override <ul> styling only within this section */
+        #temp-style ul {
+            list-style-type: disc !important; /* Use normal bullet points */
+            padding-left: 20px !important;  /* Ensure indentation */
+            margin: 10px 0 !important;
+        }
+        #temp-style li {
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
 
@@ -78,7 +95,7 @@
             <!-- Arxiv Link. -->
             <div class="publication-links">
               <span class="link-block">
-                <a href="https://jmhb0.github.io/assets/video-action-differencing.pdf"
+                <a href="https://openreview.net/forum?id=3bcN6xlO6f"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="ai ai-arxiv"></i>
@@ -120,7 +137,7 @@
       <img src="./static/images/pull.jpg"
                  class=""
                  alt="VidDiff pull figure."/>
-      <p>This paper defines the task, releases <a href="https://huggingface.co/datasets/viddiff/VidDiffBench">a benchmark</a>, and tests large mutlimodal models (LMMs) on the benchmark. We also propose a zero-shot method.</p>
+      <p>This paper defines the task, releases <a href="https://huggingface.co/datasets/jmhb/VidDiffBench">a benchmark</a>, and tests large mutlimodal models (LMMs) on the benchmark. We also propose a zero-shot method.</p>
     </div>
   </div>
 </section>
@@ -128,6 +145,92 @@
 
 
 
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">New task: Video Action Differencing (VidDiff)</h2>
+    Video Action differencing compares two vides in either a ‘closed’ evaluation or ‘open’ evaluation.<br>
+    <div id="temp-style">
+        <ul>
+            <li>
+                In <strong>Closed Evaluation:</strong>
+                <ul>
+                    <li>Input: Two videos of the same action \( (v_a, v_b) \), action description string \( s \), a list of <span style="background-color: lightblue;">candidate</span> difference strings \( \{d_0, d_1, \dots\} \).</li>
+                    <li>Output: For each difference string \( d_i \), predict \( p_i \in \{a, b\} \), which is either 'a' if the statement applies more to video \( a \), or 'b' if it applies more to video \( b \).</li>
+                </ul>
+            </li>
+            <li>
+                In <strong>Open Evaluation:</strong> the model must generate the difference strings:
+                <ul>
+                    <li>Input: Two videos of the same action \( (v_a, v_b) \), action description string \( s \), an integer \( n_{\text{diff}} \).</li>
+                    <li>Output: A list of difference strings, \( \{d_0, d_1, \dots\} \), with at most \( n_{\text{diff}} \) differences. For each difference string \( d_i \), predict \( p_i \in \{a, b\} \), which is either 'a' if the statement applies more to video \( a \), or 'b' if it applies more to video \( b \).</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <br>
+    Why is it interesting to compare actions performance between videos?
+    <div id="temp-style">
+        <ul>
+            <li> <strong>Applications:</strong> Comparison is common for learning or evaluating skills. For example a novice weightlifter learning a barbell squat might watch instructional videos of an expert doing the motion, and identify differences with their own performance. But why natural language? Because in coaching, feedback is often provided in natural language. Language is more interpretable than other formats, like keypoints. </li>
+        </ul>
+        </li>
+        <ul>
+            <li><strong>Video understanding:</strong> In computer vision, comparison enhances video understanding by revealing nuances that are difficult to express in isolation. For example, a person watching a video of a soccer kick may struggle to describe the ball's speed precisely using natural language, relying instead on broad categories like 'low,' 'medium,' and 'high.' However, when comparing two videos, even subtle differences become apparent, allowing them to easily determine (and communicate) which kick was harder.</li>
+        </ul>
+        </li>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">New Benchmark: VidDiffBench</h2>
+    Since VidDiff is a new task, we also release <a href="https://huggingface.co/datasets/jmhb/VidDiffBench">🤗 VidDiffBench Benchmark</a>. 
+    <div id="temp-style">
+      <ul>
+        <li><strong>Real-world & diverse actions:</strong> the actions are important to real skill learning, and come from a range of different activities: fitness exercises (<a href="https://caizhongang.com/projects/HuMMan/">HuMMann</a>), ballsports (<a href="https://ego-exo4d-data.org/">Ego-Exo4D"</a>), music (also <a href="https://ego-exo4d-data.org/">Ego-Exo4D"</a>), diving (<a href="https://github.com/xujinglin/FineDiving"> FineDiving</a>), and Surgery (<a href="https://cirl.lcsr.jhu.edu/research/hmm/datasets/jigsaws_release/">JIGSAWs</a>).</li>
+        <li><strong>Skill-relevant differences:</strong> each action has a taxonomy of possible differences that are important to skill-learning. The differences are fine-grained and based on domain expert input.</li>
+        <li><strong>High-quality human annotations:</strong> 4,469 annotated differences over 549 video pairs (~8 differences per video pair). </li>
+        <li><strong>Localization timestamp annotations:</strong> frame-level annotations to evaluate localization quality of models, which can help future model development. </li>
+        <li><strong>Challenges existing models:</strong> highlights major gaps in video understanding beyond single-frame or single-video analysis.</li>
+        <img src="./static/images/table-benchmark.png"
+        style="width: 70%; display: block; margin: auto;"
+                 class=""
+                 alt="VidDiff pull figure."/>
+        
+    </ul>
+  </div>
+  </div>
+</section>
+<!-- 
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">LMM performance on VidDiffBench</h2>
+    We evaluate SOTA large multimodal models (LMMs) that can do video tasks. The results are split by easy/medium/hard. First, closed evaluation, where 50% is random:
+    <br>
+    TODO - write a python converter that saves it to a html file
+    <br>
+    Next 
+
+    <br>Then open performance
+    <br>Comment
+  </div>
+  </div>
+</section>
+   -->
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Citation</h2>
+    <pre><code>@inproceedings{burgessvideo,
+      title={Video Action Differencing},
+      author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
+      booktitle={The Thirteenth International Conference on Learning Representations}
+    }</code></pre>
+    If you use the benchmark, please also cite the datasets that provided the original videos - they're listed on the <a href="https://huggingface.co/datasets/jmhb/VidDiffBench">benchmark page</a>.
+  </div>
+  
+</section>
 
 
 <footer class="footer">
