@@ -1,0 +1,75 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Leaderboard - Open</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 40px;
+                background-color: white;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background-color: white;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: center;
+            }
+            th {
+                background-color: #f2f2f2;
+                cursor: pointer;
+            }
+            th:hover {
+                background-color: #ddd;
+            }
+            tr:nth-child(even) { background-color: #f9f9f9; } /* Alternating row colors */
+            tr:nth-child(odd)  { background-color: #ffffff; }
+            a {
+                text-decoration: none;
+                color: #007bff;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+
+    <h4>Leaderboard - Open</h4>
+    <table id="leaderboard" class="display">
+        <thead>
+            <tr>
+                <th>Model</th> <th>Easy</th> <th>Med</th> <th>Hard</th> <th>Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><a href="https://openai.com/index/hello-gpt-4o/" target="_blank">GPT-4o</a></td><td>45.7%</td><td>41.5%</td><td>38.0%</td><td>41.7%</td></tr> <tr><td><a href="https://deepmind.google/technologies/gemini/pro/" target="_blank">Gemini-1.5-Pro</a></td><td>30.3%</td><td>30.5%</td><td>24.1%</td><td>28.3%</td></tr> <tr><td><a href="https://www.anthropic.com/news/claude-3-5-sonnet" target="_blank">Claude-3.5-Sonnet</a></td><td>37.8%</td><td>34.6%</td><td>34.3%</td><td>35.6%</td></tr> <tr><td><a href="https://llava-vl.github.io/blog/2024-09-30-llava-video/" target="_blank">LLaVA-Video</a></td><td>7.8%</td><td>9.0%</td><td>8.5%</td><td>8.4%</td></tr> <tr><td><a href="https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct" target="_blank">Qwen2VL-7B</a></td><td>11.2%</td><td>8.8%</td><td>1.6%</td><td>7.2%</td></tr> <tr><td><a href="nan" target="_blank">VidDiff (ours)</a></td><td>49.9%</td><td>37.9%</td><td>38.5%</td><td>42.1%</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready( function () {
+            $('#leaderboard').DataTable({
+                "order": [[ 4, "desc" ]], // Sort by "Average" column descending
+                "searching": false,  // Disable search bar
+                "paging": false,  // Disable pagination (removes "Show X entries")
+                "info": false,  // Removes "Showing X of Y entries" text
+                "columnDefs": [
+                    { "type": "html", "targets": [0] }  // Enable sorting for hyperlinks in "Model"
+                ]
+            });
+        });
+    </script>
+
+    </body>
+    </html>
+    
