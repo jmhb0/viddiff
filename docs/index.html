@@ -21,9 +21,11 @@
 
 </script>
   <!-- Math -->
-  <script type="text/javascript"
-  src="static/js/LaTeXMathML.js">
-  </script>
+  <script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
@@ -39,6 +41,40 @@
   <!-- <script src="./static/js/bulma-carousel.min.js"></script> -->
   <!-- <script src="./static/js/bulma-slider.min.js"></script> -->
   <script src="./static/js/index.js"></script>
+  <!-- temporary styles to overwrite the <ul> not working in bulma.css -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        /* Override <ul> styling only within this section */
+        #temp-style ul {
+            list-style-type: disc !important; /* Use normal bullet points */
+            padding-left: 20px !important;  /* Ensure indentation */
+            margin: 10px 0 !important;
+        }
+        #temp-style li {
+            margin-bottom: 5px;
+        }
+        .leaderboard-container {
+            width: 75%;
+            max-width: 1200px;
+            margin: auto;
+            text-align: center;
+        }
+        iframe {
+            width: 100%;
+            height: 375px;  Adjust as needed 
+            border: none;
+            background-color: none;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background-color: transparent; /* Remove white background */
+      }
+    </style>
+
+    </style>
 </head>
 <body>
 
@@ -78,7 +114,7 @@
             <!-- Arxiv Link. -->
             <div class="publication-links">
               <span class="link-block">
-                <a href="https://jmhb0.github.io/assets/video-action-differencing.pdf"
+                <a href="https://openreview.net/forum?id=3bcN6xlO6f"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="ai ai-arxiv"></i>
@@ -115,12 +151,13 @@
   <div class="container is-max-desktop">
     <div class="hero-body">
       <h2 class="subtitle has-text-centered">
-       We introduce the Video Action Differencing task (VidDiff), which compares two videos of the same action. The goal is to identify differences in how the action is performed, where the differences are expressed in natural language.
+        We introduce Video Action Differencing (VidDiff), a task that compares two videos of the same action to find key differences in how the action is performed. These differences are described in natural language, making them useful for skill analysis, and coaching.
       </h2>
       <img src="./static/images/pull.jpg"
                  class=""
                  alt="VidDiff pull figure."/>
-      <p>This paper defines the task, releases <a href="https://huggingface.co/datasets/viddiff/VidDiffBench">a benchmark</a>, and tests large mutlimodal models (LMMs) on the benchmark. We also propose a zero-shot method.</p>
+      <p>This paper defines the VidDiff task, releases a benchmark called <a href="https://huggingface.co/datasets/jmhb/VidDiffBench">VidDiffBench</a>, and evaluates state-of-the-art large multimodal models (LMMs) on the benchmark. We also propose the VidDiff method, a method for improving video comparison with zero-shot models.
+      </p>
     </div>
   </div>
 </section>
@@ -128,6 +165,141 @@
 
 
 
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">New task: Video Action Differencing (VidDiff)</h2>
+    Video Action differencing compares two vides in either. We have ‘closed’ and ‘open’ evaluation settings:<br>
+    <div id="temp-style">
+        <ul>
+            <li> In <strong>Closed Evaluation</strong>:
+                <ul>
+                    <li>Input: Two videos of the same action \( (v_a, v_b) \), action description string \( s \), a list of candidate difference strings \( \{d_0, d_1, \dots\} \).</li>
+                    <li>Output: For each difference string \( d_i \), predict \( p_i \in \{a, b\} \), which is either 'a' if the statement applies more to video \( a \), or 'b' if it applies more to video \( b \).</li>
+                </ul>
+            <li> In <strong>Open Evaluation</strong> the model must generate the difference strings:
+                <ul>
+                    <li>Input: Two videos of the same action \( (v_a, v_b) \), action description string \( s \), an integer \( n_{\text{diff}} \).</li>
+                    <li>Output: A list of difference strings, \( \{d_0, d_1, \dots\} \), with at most \( n_{\text{diff}} \) differences. For each difference string \( d_i \), predict \( p_i \in \{a, b\} \), which is either 'a' if the statement applies more to video \( a \), or 'b' if it applies more to video \( b \).</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <br>
+    Why is it interesting to compare actions performance between videos?
+    <div id="temp-style">
+        <ul>
+            <li> <strong>Applications:</strong> Comparison is common for learning or evaluating skills. For example a novice weightlifter learning a barbell squat might watch instructional videos of an expert doing the motion, and identify differences with their own performance. But why natural language? Because in coaching, feedback is often provided in natural language. Language is more interpretable than other formats, like keypoints. </li>
+            <li><strong>Video understanding:</strong> In computer vision, comparison enables video understanding tasks that are too difficult to express without comparison. For example, a person watching a video of a soccer kick may struggle to describe the ball's speed precisely using natural language, relying instead on broad categories like 'low,' 'medium,' and 'high.' However, when comparing two videos, it's much easier to perceive and communicate which kick was harder.</li>
+        </ul>
+        </li>
+  </div>
+  <br><br>
+  What makes Video Action Differencing hard? We think there's two main things:
+  <div id="temp-style">
+        <ul>
+            <li> <strong>Localization of sub-actions:</strong> finding differences requires finding the sub-action frames where the differences might occur, and aligning those frames between the two videos</li>
+            <li><strong>Fine-grained understanding:</strong> ability to perceive subtle visual differences in motions.</li>
+        </ul>
+        </li>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">The VidDiffBench benchmark</h2>
+    Since VidDiff is a new task, we also release <a href="https://huggingface.co/datasets/jmhb/VidDiffBench">🤗 VidDiffBench Benchmark</a>. 
+    <div id="temp-style">
+      <ul>
+        <li><strong>Real-world & diverse actions:</strong> the actions are important to real skill learning, and come from a range of different activities: fitness exercises (<a href="https://caizhongang.com/projects/HuMMan/">HuMMann</a>), ballsports (<a href="https://ego-exo4d-data.org/">Ego-Exo4D"</a>), music (also <a href="https://ego-exo4d-data.org/">Ego-Exo4D"</a>), diving (<a href="https://github.com/xujinglin/FineDiving"> FineDiving</a>), and Surgery (<a href="https://cirl.lcsr.jhu.edu/research/hmm/datasets/jigsaws_release/">JIGSAWs</a>). There's a range in how complex the actions are, and how consistent the video backgrounds are.</li>
+        <li><strong>Skill-relevant differences:</strong> each action has a taxonomy of possible differences that are important to skill-learning. The differences are based on fine-grained motion and based on domain expertise.</li> 
+        <li><strong>Human-generated difference annotations:</strong> 4,469 difference anntations over 549 video pairs (~8 differences per video pair). Annotation time per video pair is ~3 minutes.</li>
+        <li><strong>Localization timestamp annotations:</strong> frame-level annotations of the sub-actions and differences. They enable evaluating localization quality of models, which can help future model development. </li>
+        <li><strong>Challenges existing models:</strong> highlights major gaps in video understanding beyond single-frame or single-video analysis.</li>
+        <img src="./static/images/table-benchmark.png" style="width: 70%; display: block; margin: auto;" class="" alt="VidDiffBench table of statistics."/>
+    </ul>
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Evaluating LMMs on VidDiffBench</h2>
+    SOTA large multimodal models (LMMs) struggle at Video Action Differencing. 
+    <br><br>
+    <strong>Quantitative results:</strong>
+    <br>
+    First is closed evaluation accuracy, where 50% is random and gray shading indicates better-than-random with statistical significance:
+    <br>
+    <div class="leaderboard-container">
+    <iframe src="static/leaderboard/html/web-csv-closed.html" background-color: white;></iframe>
+    </div>
+    <br>
+    All LMMs perform only slightly better than random on the easy split, showing lots of space for improvement. Gemini, which has advertised their video understanding results more than other frontier models, has the strongest performance. The open-source LLaVA-Video is competitve with closed models, while QwenVL-2 underperforms (possibly due to instruction following issues). 
+    <br>In open evaluation, the metric is recall@N, so worst-case performance is zero:
+    <br>
+    <div class="leaderboard-container">
+    <iframe src="static/leaderboard/html/web-csv-open.html" style="width: 100% border: 450px; background-color: transparent;"></iframe>
+    </div>
+
+    <br>Here, the LMMs must identify the important differences, which relies on prior knowledge about actions. Compared to the closed setting, GPT and Claude perform better, Gemini performs relatively worse, and the open-source models have the lowest performance.
+    <br><br> 
+    <strong>Qualitative results:</strong>
+    <br>We looked at 'success cases': what were the properties of difference types where the models performed better? 
+    <br><br>
+    <img src="./static/images/differences_analysis.jpeg" style="width: 90%; display: block; margin: auto;" class="" alt="VidDiffBench table of statistics."/>
+    <br>
+    The 'success case' differences tend to have very easy localization and coarse grained visual differences. Any difference that had harder localization or fine-grained differences proved to be challenging.
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">The VidDiff method</h2>
+    Finally, we propose the VidDiff method, a zero-shot <a href="https://bair.berkeley.edu/blog/2024/02/18/compound-ai-systems/">agentic workflow</a> (or <a href="https://www.anthropic.com/research/building-effective-agents">compound system</a>).
+    The stages decompose the differencing task into logical steps, and leverage strong zero-shot models for each step.
+    <img src="./static/images/viddiff-method.jpeg" style="width: 100%; display: block; margin: auto;" class="" alt="VidDiff method"/>
+    The stages in open mode are:
+    <div id="temp-style">
+        <ul>
+          <li><strong>Difference proposer:</strong> takes the action description string like "deadlift" or "practice soccer kick", and uses an LLM to propose candidate difference strings. </li>
+          <li><strong>Frame localizer:</strong> does temporal segmentation of  the sub-actions that make up the action. It uses an LLM to propose the sub-actions, uses an LLM to generate retrival strings for each sub-action, and then compares those strings to frames using CLIP. Finally it uses an LLM to link sub-actions to candidate differences.</li>
+          <li><strong>Action differencer:</strong> we now have candidate differences and their corresponding frames in bothe videos. So we now form a VQA query for a VLM (we use GPT-4o): we pass the frames to the VLM and ask whether the difference applies more to video A, video B, or neither</li>
+      </ul>
+    </div>
+    (In closed mode, the method is the same, except here the difference strings are provided, so we don't need to generate them.)
+    <br>
+    Overall this method is structured to <em>localize</em> the key parts of the video where differences are possible, which should make visual comparison with the VLM easier (the <em>fine-grain understanding</em> part). The results are in the tables in the previous section as "VidDiff (ours)". The results outperform GPT-4o, which is the VLM backbone that we used, and this shows the value of our staged approach. It had the best overall performance in open eval, and second-best in closed eval.
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Related Links</h2>
+    <!-- Here is some of the most relevant related work. (The paper has a fuller discussion.) -->
+    <!-- <br><br> -->
+    Only a few prior works do video comparison. <a href="https://dl.acm.org/doi/10.1145/2816795.2818125">VideoDiff</a> compares how actions are performed, but the output is a visual annotation (instead of language), and there are more constraints on camer angle consistency. <a href="https://openaccess.thecvf.com/content/CVPR2024/html/Nagarajan_Step_Differences_in_Instructional_Video_CVPR_2024_paper.html">Nagarajan and Torresani</a> compare instructional videos, focusing on differences in action steps, rather than how the action is performed. <a href="https://openaccess.thecvf.com/content_cvpr_2018/html/Doughty_Whos_Better_Whos_CVPR_2018_paper.html">Doughty et al</a> use video comparison as a sparse training signal for action quality assessment.
+    <br><br> 
+    Image comparison is more established: <a href="https://arxiv.org/abs/1808.10584">Jhamtani et al</a>  compared nearly identical images with few object differences, and <a href="https://openaccess.thecvf.com/content_ICCV_2019/papers/Park_Robust_Change_Captioning_ICCV_2019_paper.pdf">Park et al</a> extended this to varying objects and camera angles. Zero shot captioning VLMs have considered image comparison as early as the <a href="https://arxiv.org/abs/2204.14198">Flamingo paper</a>. More recently, <a href="https://understanding-visual-datasets.github.io/VisDiff-website/">VisDiff</a> extends the idea to comparing sets of images.
+    <br><br>
+    Many works address skills feedback on single videos without video comparison, including <a href="https://arxiv.org/abs/2006.11718">PoseTutor</a> for yoga and  <a href="">Parmar et al</a> for weightlifting. <a href="https://arxiv.org/abs/2311.18259">Ego-Exo4d</a> provides expert commentary, which is promising for instructional feedback systems. <a href="https://link.springer.com/chapter/10.1007/978-3-319-10599-4_36">Action quality assessment</a> is also a relevant task, since it focuses on assessing movement quality.
+</section>
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Citation</h2>
+    <pre><code>@inproceedings{burgessvideo,
+      title={Video Action Differencing},
+      author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
+      booktitle={The Thirteenth International Conference on Learning Representations}
+    }</code></pre>
+    If you use the benchmark, please also cite the datasets that provided the original videos - they're listed on the <a href="https://huggingface.co/datasets/jmhb/VidDiffBench">benchmark page</a>.
+  </div>
+  
+</section>
 
 
 <footer class="footer">
