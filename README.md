@@ -116,10 +116,22 @@ The inference fps is controlled in the config file `lmms/configs/config.yaml`. W
 ## VidDiff method 
 The Viddiff method is in `viddiff_method`. To run it, look at [this README](viddiff_method/README.md). 
 
+## Acknowledgements 
+Code for running CLIP servers taken from [VisDiff](https://github.com/Understanding-Visual-Datasets/VisDiff). The VidDiff method has a temporal action segmentation step that borrows from [Anna Kukleva's repo](https://github.com/Annusha/unsup_temp_embed) in `viddiff_method/utils_retriever.py`.
+
+
 ## Citation 
-Please cite the paper using, and also the papers where we sourced the videos. Use `\cite{burgessvideo, cai2022humman, parmar2022domain, grauman2024ego, gao2014jhu}`.
+Please cite the paper: 
 ```
 
+@inproceedings{burgessvideo,
+  title={Video Action Differencing},
+  author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
+  booktitle={The Thirteenth International Conference on Learning Representations}
+}```
+
+If you used the benchmark, then also cite the papers where we sourced the videos. Use `\cite{burgessvideo, cai2022humman, parmar2022domain, grauman2024ego, gao2014jhu}`.
+```
 @inproceedings{burgessvideo,
   title={Video Action Differencing},
   author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},

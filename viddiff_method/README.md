@@ -1,33 +1,27 @@
-# Viddiff method 
+# Viddiff method overivew
 The viddiff method has 3 components: 
-- Proposer: in '`open' eval it calls an LLM to propose possible differences strings between actions based on the input action string. In open and closed eval, it also calls an LLM to create strings that are used by the retrieval model 
-- Retriever
-- FrameDifferenceer
+- `stage1_proposer.py`: in '`open' eval it calls an LLM to propose possible differences strings between actions based on the input action string. In open and closed eval, it calls an LLM to be used by the retriver module. First it proposes a list of subactions, then creates retrieval strings for each of those subactions, and finally it links the subactions to the proposed difference strings. 
+- `stage2_retriever.py`: for each difference and each video, this retrieves the most relevant frames. To do this, it calls CLIP to compute text-image similarity for the retrieval strings (from last stage), then does temporal segmentation of the subactions using the `utils_retriever.py` module. 
+- `stage3_differencer.py`: given the retrieval frames and difference strings, query a VLM for whether the difference applies more for video A or B or neither.
 
-Results to LLM calls and CLIP calls are automatically cached (in `cache` directory). 
+The results of calls to LLM APIs and to CLIP calls are automatically cached (in `cache` directory). 
 
-# Run the VidDiff method
-The method depends on a CLIP server you have to start locally and the OpenAI API. 
+## Run the VidDiff method
+First get the dataset from https://huggingface.co/datasets/jmhb/VidDiffBench.
 
-## Set API keys
-Set $OPENAI_API_KEY environment variable, which is used by the Proposer and FrameDifferenceer modules
-
-Run the VidDiff method with:
+Then run the VidDiff method with:
 ```
-python -m ipdb viddiff_method/run_viddiff.py --config viddiff_method/configs/config.yaml --name viddiff_easy --split easy --eval_mode closed --subset_mode 0
+python  viddiff_method/run_viddiff.py --config viddiff_method/configs/config.yaml --name viddiff_easy --split easy --eval_mode closed --subset_mode 0
 ```
-If the results are not cached, you first 
+This should work out of the box because we have implemented caching of all LLM and CLIP calls and included the cache in the repo. 
 
-
-## Run CLIP model as a server
-The `retriever` module calls CLIP. To avoid loading CLIP each time, we run it as a server. We tested this on a6000 hardware. 
-
-Run `python apis/clip_server.py &`, which uses [OpenClip](https://github.com/mlfoundations/open_clip) like this: 
+But if you change anything, then you'll need to set up the api key `$OPENAI_API_KEY`, and run a CLIP server. We used a CLIP server because it saves loading the model for each model run. We tested this on a6000 hardware. Run `python apis/clip_server.py &`, which uses [OpenClip](https://github.com/mlfoundations/open_clip) like this: 
 ```
 import open_clip
 model, _, preprocess = open_clip.create_model_and_transforms(
         "ViT-bigG-14", pretrained="laion2b_s39b_b160k")
 ```
-Then the code will call 
+This creates `tmp` directory which saves images for the CLIP server. This is not the fastes way to do this, but for a smaller dataset it's manageable. Also the function automatically does embedding caching. 
 
-Creates `tmp` directory which saves images for the CLIP server. This is not the fastes way to do this, but for a smaller dataset it's manageable. Also the function automatically does embedding caching into ``
+
+
