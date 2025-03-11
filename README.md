@@ -128,6 +128,7 @@ Please cite the paper:
   title={Video Action Differencing},
   author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
   booktitle={The Thirteenth International Conference on Learning Representations}
-}```
+}
+```
 
 If you used the benchmark, then also cite the papers where we sourced the videos: citations listed at the bottom of https://huggingface.co/datasets/jmhb/VidDiffBench
