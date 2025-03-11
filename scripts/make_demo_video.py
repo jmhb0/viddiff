@@ -1,5 +1,6 @@
 """
 python -m ipdb scripts/make_demo_video.py
+made with claude-3.7-thinking in cursor over many iterations
 """
 
 import os
