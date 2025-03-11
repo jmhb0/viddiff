@@ -1,7 +1,7 @@
 model_name,model_link,Easy,Med,Hard,Average
 GPT-4o,https://openai.com/index/hello-gpt-4o/,45.7%,41.5%,38.0%,41.7%
-Gemini-1.5-Pro,https://deepmind.google/technologies/gemini/pro/,30.3%,30.5%,24.1%,28.3%
+Gemini-1.5-Pro,https://ai.google.dev/gemini-api/docs/models/gemini#gemini-1.5-pro,30.3%,30.5%,24.1%,28.3%
 Claude-3.5-Sonnet,https://www.anthropic.com/news/claude-3-5-sonnet,37.8%,34.6%,34.3%,35.6%
-LLaVA-Video,https://llava-vl.github.io/blog/2024-09-30-llava-video/,7.8%,9.0%,8.5%,8.4%
+LLaVA-Video-7B,https://huggingface.co/lmms-lab/LLaVA-Video-7B-Qwen2,7.8%,9.0%,8.5%,8.4%
 Qwen2VL-7B,https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct,11.2%,8.8%,1.6%,7.2%
 VidDiff (ours),https://jmhb0.github.io/viddiff/,49.9%,37.9%,38.5%,42.1%

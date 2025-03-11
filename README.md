@@ -103,7 +103,7 @@ For --model option:
 - Openai API, e.g. we tested 'gpt-4o-2024-08-06', set OPENAI_API_KEY environment variable. 
 - Openrouter API, e.g. we tested 'anthropic/claude-3-5-sonnet', set OPENROUTER_API_KEY environment variable. 
 - Gemini API, e.g. we tested 'models/gemini-1.5-pro', set GEMINI_API_KEY environment variable. This one is really slow to run bc we didn't implement batching. 
-- QwenVL and LLaVA-video we did not use an API, so you need to run it locally. Follow package installation instructions [from here for Qwen](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct) and [from here for LLaVA-video](https://huggingface.co/lmms-lab/LLaVA-Video-72B-Qwen2). It's slow because no batching. 
+- QwenVL and LLaVA-video we did not use an API, so you need to run it locally. Follow package installation instructions [from here for Qwen](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct) and [from here for LLaVA-video](https://huggingface.co/lmms-lab/LLaVA-Video-72-Qwen2). It's slow because no batching. 
 
 The other options:
 - `name` used to save the results to `lmms/results/<name>`
