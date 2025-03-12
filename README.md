@@ -127,7 +127,9 @@ Please cite the paper:
 @inproceedings{burgessvideo,
   title={Video Action Differencing},
   author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
-  booktitle={The Thirteenth International Conference on Learning Representations}
+  booktitle={The Thirteenth International Conference on Learning Representations},
+  year={2025}
+
 }
 ```
 
