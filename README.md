@@ -123,13 +123,11 @@ Code for running CLIP servers taken from [VisDiff](https://github.com/Understand
 ## Citation 
 Please cite the paper: 
 ```
-
-@inproceedings{burgessvideo,
+@article{burgess2025video,
   title={Video Action Differencing},
   author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
-  booktitle={The Thirteenth International Conference on Learning Representations},
+  journal={arXiv preprint arXiv:2503.07860},
   year={2025}
-
 }
 ```
 
