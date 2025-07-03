@@ -15,13 +15,23 @@ python viddiff_method/run_viddiff.py --config viddiff_method/configs/config.yaml
 ```
 This should work out of the box because we have implemented caching of all LLM and CLIP calls and included the cache in the repo. 
 
-But if you code or data, then you'll need to set up the api key `$OPENAI_API_KEY`, and run a CLIP server. We used a CLIP server because it saves loading the model for each run of the viddiff method. We tested this on an a6000. Run `python apis/clip_server.py &`, which uses [OpenClip](https://github.com/mlfoundations/open_clip) like this: 
+But if you change the code or data at all, then you'll need to set up the api key `$OPENAI_API_KEY`, and run a CLIP server. We used a CLIP server because it saves loading the CLIP model for each run of the viddiff method. We tested this on an a6000. Run `python apis/clip_server.py &`, and the server is running when you see this (takes about a minute):
+```
+ * Serving Flask app 'clip_server'
+ * Debug mode: off
+INFO:werkzeug:WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8090
+ * Running on http://10.79.12.235:8090
+INFO:werkzeug:Press CTRL+C to quit
+```
+
+This code uses [OpenClip](https://github.com/mlfoundations/open_clip) like this: 
 ```
 import open_clip
 model, _, preprocess = open_clip.create_model_and_transforms(
         "ViT-bigG-14", pretrained="laion2b_s39b_b160k")
 ```
 This creates `tmp` directory which saves images for the CLIP server. This is not the fastes way to do this, but for a smaller dataset it's manageable. Also the function automatically does embedding caching. 
-
 
 

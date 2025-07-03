@@ -1,0 +1,75 @@
+project: viddiff
+seed: 0
+debug: 0
+do_eval: 1 
+eval_mode: closed
+verbose: 1
+
+logging: 
+  name: config 
+  results_dir: viddiff_method/results/${logging.name}/seed_${seed}
+  overwrite_ok: True
+  verbose: ${verbose}
+
+fps_inference: 
+    fitness: 8      # original fps is 8
+    ballsports: 5   # original fps is 30
+    diving: 6       # original fps is 12
+    music: 1        # original fps is 30
+    surgery: 1      # original fps is 30
+
+data:
+  split: easy
+  debug: ${debug}
+  eval_mode: ${eval_mode}  
+  subset_mode: "0" # works with "3_per_action" for example
+  # subset_mode: "4_per_action"
+
+# stage 1
+proposer: 
+  api: openai
+  # model: gpt-4o-2024-05-13
+  model: gpt-4o-mini-2024-07-18 
+  prompt_key_1_differences: 0
+  prompt_key_2_subactions: 0
+  prompt_key_3_subaction_filtering: 0
+  prompt_key_4_linking: 0
+  filter_retrieval_keys: True
+  drop_unmatched_diffs: True
+  n_retrieval_keys: 5
+  eval_mode: ${eval_mode}
+  do_eval: {do_eval}
+  verbose: ${verbose}
+  seed: ${seed}
+
+# stage 2
+retriever:
+  mode: 2
+  log_imgs: 0
+  do_random_retrieval: 0
+  eval_mode: ${eval_mode}
+  multiframe: 
+    nframes: 3
+    frames_sep_seconds: 0.35
+  model_config:
+    model: "ViT-bigG-14"
+  do_eval: ${do_eval}
+  seed: ${seed}
+  verbose: ${verbose}
+
+# stage 3
+frame_differencer:
+  prompt_key: 4
+  prompt_key_multiframe: 4
+  system_prompt_key: 0
+  log_imgs: 0
+  decode_strategy: 1    # prompt decoding strategy 
+  nframes: 3
+  frames_sep_seconds: 0.25      # seconds between successive frames from the same video in caption query
+  mode_accumulate_preds: 0 # policy for getting the final prediction
+  model: gpt-4o-2024-05-13
+  eval_mode: ${eval_mode} # not sure it's used
+  do_eval: ${do_eval}
+  seed: ${seed}
+
+
