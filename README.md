@@ -103,7 +103,7 @@ For --model option:
 - Openai API, e.g. we tested 'gpt-4o-2024-08-06', set OPENAI_API_KEY environment variable. 
 - Openrouter API, e.g. we tested 'anthropic/claude-3-5-sonnet', set OPENROUTER_API_KEY environment variable. 
 - Gemini API, e.g. we tested 'models/gemini-1.5-pro', set GEMINI_API_KEY environment variable. This one is really slow to run bc we didn't implement batching. 
-- QwenVL and LLaVA-video we did not use an API, so you need to run it locally. Follow package installation instructions [from here for Qwen](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct) and [from here for LLaVA-video](https://huggingface.co/lmms-lab/LLaVA-Video-72B-Qwen2). It's slow because no batching. 
+- QwenVL and LLaVA-video we did not use an API, so you need to run it locally. Follow package installation instructions [from here for Qwen](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct) and [from here for LLaVA-video](https://huggingface.co/lmms-lab/LLaVA-Video-72-Qwen2). It's slow because no batching. 
 
 The other options:
 - `name` used to save the results to `lmms/results/<name>`
@@ -123,11 +123,12 @@ Code for running CLIP servers taken from [VisDiff](https://github.com/Understand
 ## Citation 
 Please cite the paper: 
 ```
-
-@inproceedings{burgessvideo,
+@article{burgess2025video,
   title={Video Action Differencing},
   author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
-  booktitle={The Thirteenth International Conference on Learning Representations}
-}```
+  journal={arXiv preprint arXiv:2503.07860},
+  year={2025}
+}
+```
 
 If you used the benchmark, then also cite the papers where we sourced the videos: citations listed at the bottom of https://huggingface.co/datasets/jmhb/VidDiffBench

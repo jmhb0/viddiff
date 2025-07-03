@@ -75,6 +75,7 @@
     </style>
 
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
@@ -114,7 +115,7 @@
             <!-- Arxiv Link. -->
             <div class="publication-links">
               <span class="link-block">
-                <a href="https://openreview.net/forum?id=3bcN6xlO6f"
+                <a href="https://arxiv.org/abs/2503.07860"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="ai ai-arxiv"></i>
@@ -138,6 +139,16 @@
                   <span>Code</span>
                   </a>
               </span>
+              <!-- Leaderboard Link. -->
+                <span class="link-block">
+                  <a href="#leaderboard" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <!-- <i class="fab fa-github"></i> -->
+                      <i class="fa-solid fa-trophy"></i>
+                    </span>
+                    <span>Leaderboard</span>
+                  </a>
+                </span>
             </div>
           </div>
         </div>
@@ -145,6 +156,7 @@
     </div>
   </div>
 </section>
+
 
 <section class="hero teaser">
   <div class="container is-max-desktop">
@@ -155,6 +167,7 @@
       <!-- <img src="./static/images/pull.jpg" class="" alt="VidDiff pull figure."/> -->
       <div class="container is-max-desktop">
       <video width="100%" autoplay muted loop playsinline controls preload="auto">
+        <source src="static/images/final_demo.mp4" type="video/mp4">
         <source src="static/images/final_demo.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
@@ -229,13 +242,16 @@
         <li><strong>Human-generated difference annotations:</strong> 4,469 difference annotations for 549 video pairs (~8 differences per video pair). Annotation time per video pair is ~3 minutes.</li>
         <li><strong>Localization timestamp annotations:</strong> frame-level annotations of the sub-actions and differences. This enables evaluating localization quality of models, which can help future model development. </li>
         <li><strong>Challenges existing models:</strong> highlights major gaps in video understanding beyond single-frame or single-video analysis.</li>
-        <img src="./static/images/table-benchmark.png" style="width: 70%; display: block; margin: auto;" class="" alt="VidDiffBench table of statistics."/>
     </ul>
+    <!-- <img src="./static/images/table-benchmark.png" style="width: 70%; display: block; margin: auto;" class="" alt="VidDiffBench table of statistics."/> -->
+    <br> Explore the benchmark here. (The viewer doesn't support full videos, so it only shows the thumbnail.)
+    <!-- <iframe src="https://huggingface.co/datasets/jmhb/VidDiffBench/embed/viewer/default/dev" frameborder="0" width="100%" height="560px"></iframe> -->
+    <iframe src="https://huggingface.co/datasets/jmhb/VidDiffBench/embed/viewer/default/dev" frameborder="0" width="100%" style="height: 700px !important;"></iframe>
   </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="leaderboard">
   <div class="container is-max-desktop">
     <h2 class="title is-3">Evaluating LMMs on VidDiffBench</h2>
     SOTA large multimodal models (LMMs) struggle at Video Action Differencing. 
@@ -306,11 +322,12 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">Citation</h2>
-    <pre><code>@inproceedings{burgessvideo,
-      title={Video Action Differencing},
-      author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
-      booktitle={The Thirteenth International Conference on Learning Representations}
-    }</code></pre>
+    <pre><code>@article{burgess2025video,
+    title={Video Action Differencing},
+    author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
+    journal={arXiv preprint arXiv:2503.07860},
+    year={2025}
+  }</code></pre>
     If you use the benchmark, please also cite the datasets that provided the original videos - they're listed on the <a href="https://huggingface.co/datasets/jmhb/VidDiffBench">benchmark page</a>.
   </div>
   
